@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع تسجيل التائهين</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 20px;
+            }
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+            background: white;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .search-results {
+            margin-top: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .person-card {
+            background: #f8f9fa;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .person-card:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateX(-5px);
+        }
+
+        .person-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .person-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #333;
+            margin-top: 2px;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+
+        .stats h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            margin-top: 10px;
+        }
+
+        .export-btn:hover {
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 موقع تسجيل التائهين</h1>
+            <p>نظام شامل لتسجيل والبحث عن الأشخاص المفقودين</p>
+        </div>
+
+        <div class="stats">
+            <h3>إجمالي المسجلين: <span id="totalCount">0</span></h3>
+        </div>
+
+        <div class="main-content">
+            <!-- قسم التسجيل -->
+            <div class="section">
+                <h2>📝 تسجيل شخص تائه</h2>
+                <div class="success-message" id="successMessage">
+                    تم حفظ البيانات بنجاح! ✅
+                </div>
+                <form id="registrationForm">
+                    <div class="form-group">
+                        <label for="fullName">الاسم الكامل *</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">العمر</label>
+                        <input type="number" id="age" name="age" min="0" max="120">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">الجنس</label>
+                        <select id="gender" name="gender">
+                            <option value="">اختر الجنس</option>
+                            <option value="ذكر">ذكر</option>
+                            <option value="أنثى">أنثى</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lastLocation">آخر مكان شوهد فيه</label>
+                        <input type="text" id="lastLocation" name="lastLocation">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactInfo">معلومات الاتصال</label>
+                        <input type="text" id="contactInfo" name="contactInfo" placeholder="رقم الهاتف أو البريد الإلكتروني">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">وصف إضافي</label>
+                        <textarea id="description" name="description" rows="3" placeholder="أي معلومات إضافية مفيدة..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dateReported">تاريخ الإبلاغ</label>
+                        <input type="date" id="dateReported" name="dateReported">
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        💾 حفظ البيانات
+                        <span class="loading" id="saveLoading" style="display: none;"></span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- قسم البحث -->
+            <div class="section">
+                <h2>🔍 البحث عن شخص</h2>
+                <div class="form-group">
+                    <label for="searchInput">ابحث بالاسم أو أي معلومة</label>
+                    <input type="text" id="searchInput" placeholder="اكتب اسم الشخص أو أي معلومة للبحث...">
+                </div>
+                
+                <button type="button" class="btn" onclick="searchPeople()">
+                    🔍 بحث
+                </button>
+                
+                <button type="button" class="btn export-btn" onclick="exportData()">
+                    📊 تصدير البيانات
+                </button>
+                
+                <div class="search-results" id="searchResults">
+                    <div class="no-results">
+                        استخدم حقل البحث أعلاه للعثور على الأشخاص المسجلين
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تحديد التاريخ الحالي كافتراضي
+        document.getElementById('dateReported').value = new Date().toISOString().split('T')[0];
+
+        // تحميل البيانات عند بدء الصفحة
+        window.onload = function() {
+            updateTotalCount();
+            displayAllPeople();
+        };
+
+        // وظيفة حفظ البيانات
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const saveLoading = document.getElementById('saveLoading');
+            const successMessage = document.getElementById('successMessage');
+            
+            saveLoading.style.display = 'inline-block';
+            
+            // محاكاة تأخير الحفظ
+            setTimeout(() => {
+                const formData = new FormData(this);
+                const personData = {
+                    id: Date.now(), // معرف فريد
+                    fullName: formData.get('fullName'),
+                    age: formData.get('age'),
+                    gender: formData.get('gender'),
+                    lastLocation: formData.get('lastLocation'),
+                    contactInfo: formData.get('contactInfo'),
+                    description: formData.get('description'),
+                    dateReported: formData.get('dateReported'),
+                    dateAdded: new Date().toLocaleString('ar-SA')
+                };
+
+                // حفظ في localStorage
+                let savedPeople = JSON.parse(localStorage.getItem('lostPeople') || '[]');
+                savedPeople.push(personData);
+                localStorage.setItem('lostPeople', JSON.stringify(savedPeople));
+
+                // إظهار رسالة النجاح
+                saveLoading.style.display = 'none';
+                successMessage.style.display = 'block';
+                
+                // إخفاء الرسالة بعد 3 ثوان
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+
+                // مسح النموذج
+                this.reset();
+                document.getElementById('dateReported').value = new Date().toISOString().split('T')[0];
+                
+                // تحديث العداد والنتائج
+                updateTotalCount();
+                displayAllPeople();
+            }, 1000);
+        });
+
+        // وظيفة البحث
+        function searchPeople() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const savedPeople = JSON.parse(localStorage.getItem('lostPeople') || '[]');
+            
+            let results = savedPeople;
+            
+            if (searchTerm) {
+                results = savedPeople.filter(person => 
+                    person.fullName.toLowerCase().includes(searchTerm) ||
+                    (person.age && person.age.toString().includes(searchTerm)) ||
+                    (person.gender && person.gender.toLowerCase().includes(searchTerm)) ||
+                    (person.lastLocation && person.lastLocation.toLowerCase().includes(searchTerm)) ||
+                    (person.contactInfo && person.contactInfo.toLowerCase().includes(searchTerm)) ||
+                    (person.description && person.description.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            displayResults(results, searchTerm);
+        }
+
+        // وظيفة عرض جميع الأشخاص
+        function displayAllPeople() {
+            const savedPeople = JSON.parse(localStorage.getItem('lostPeople') || '[]');
+            displayResults(savedPeople, '');
+        }
+
+        // وظيفة عرض النتائج
+        function displayResults(results, searchTerm) {
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        ${searchTerm ? 'لم يتم العثور على نتائج للبحث: "' + searchTerm + '"' : 'لا توجد بيانات مسجلة بعد'}
+                    </div>
+                `;
+                return;
+            }
+
+            resultsContainer.innerHTML = results.map(person => `
+                <div class="person-card">
+                    <button class="delete-btn" onclick="deletePerson(${person.id})" title="حذف">×</button>
+                    <h3>${person.fullName}</h3>
+                    <div class="person-info">
+                        ${person.age ? `<div class="info-item"><div class="info-label">العمر:</div><div class="info-value">${person.age} سنة</div></div>` : ''}
+                        ${person.gender ? `<div class="info-item"><div class="info-label">الجنس:</div><div class="info-value">${person.gender}</div></div>` : ''}
+                        ${person.lastLocation ? `<div class="info-item"><div class="info-label">آخر مكان:</div><div class="info-value">${person.lastLocation}</div></div>` : ''}
+                        ${person.contactInfo ? `<div class="info-item"><div class="info-label">الاتصال:</div><div class="info-value">${person.contactInfo}</div></div>` : ''}
+                        ${person.dateReported ? `<div class="info-item"><div class="info-label">تاريخ الإبلاغ:</div><div class="info-value">${person.dateReported}</div></div>` : ''}
+                        <div class="info-item"><div class="info-label">تاريخ التسجيل:</div><div class="info-value">${person.dateAdded}</div></div>
+                    </div>
+                    ${person.description ? `<div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;"><strong>وصف إضافي:</strong> ${person.description}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // وظيفة حذف شخص
+        function deletePerson(id) {
+            if (confirm('هل أنت متأكد من حذف هذا السجل؟')) {
+                let savedPeople = JSON.parse(localStorage.getItem('lostPeople') || '[]');
+                savedPeople = savedPeople.filter(person => person.id !== id);
+                localStorage.setItem('lostPeople', JSON.stringify(savedPeople));
+                
+                updateTotalCount();
+                displayAllPeople();
+            }
+        }
+
+        // وظيفة تحديث العداد
+        function updateTotalCount() {
+            const savedPeople = JSON.parse(localStorage.getItem('lostPeople') || '[]');
+            document.getElementById('totalCount').textContent = savedPeople.length;
+        }
+
+        // وظيفة تصدير البيانات
+        function exportData() {
+            const savedPeople = JSON.parse(localStorage.getItem('lostPeople') || '[]');
+            
+            if (savedPeople.length === 0) {
+                alert('لا توجد بيانات للتصدير');
+                return;
+            }
+
+            // تحويل البيانات إلى CSV
+            const headers = ['الاسم الكامل', 'العمر', 'الجنس', 'آخر مكان', 'معلومات الاتصال', 'الوصف', 'تاريخ الإبلاغ', 'تاريخ التسجيل'];
+            const csvContent = [
+                headers.join(','),
+                ...savedPeople.map(person => [
+                    person.fullName || '',
+                    person.age || '',
+                    person.gender || '',
+                    person.lastLocation || '',
+                    person.contactInfo || '',
+                    person.description || '',
+                    person.dateReported || '',
+                    person.dateAdded || ''
+                ].map(field => `"${field}"`).join(','))
+            ].join('\n');
+
+            // تنزيل الملف
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `بيانات_التائهين_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // البحث التلقائي عند الكتابة
+        document.getElementById('searchInput').addEventListener('input', function() {
+            if (this.value.trim() === '') {
+                displayAllPeople();
+            } else {
+                searchPeople();
+            }
+        });
+
+        // إضافة تأثيرات تفاعلية
+        document.querySelectorAll('.section').forEach(section => {
+            section.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            section.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
+
